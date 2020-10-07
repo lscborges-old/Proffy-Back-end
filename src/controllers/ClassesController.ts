@@ -10,7 +10,7 @@ interface ScheduleItem {
 }
 
 export default class ClassesController {
-  async create(request: Request, response: Response) {
+  async create(request: Request, response: Response): Promise<Response> {
     const {
       name,
       avatar,
@@ -41,14 +41,12 @@ export default class ClassesController {
 
       const class_id = insertedClassesIds[0];
 
-      const classSchedule = schedule.map((scheduleItem: ScheduleItem) => {
-        return {
-          class_id,
-          week_day: scheduleItem.week_day,
-          from: convertHourToMinutes(scheduleItem.from),
-          to: convertHourToMinutes(scheduleItem.to),
-        };
-      });
+      const classSchedule = schedule.map((scheduleItem: ScheduleItem) => ({
+        class_id,
+        week_day: scheduleItem.week_day,
+        from: convertHourToMinutes(scheduleItem.from),
+        to: convertHourToMinutes(scheduleItem.to),
+      }));
 
       await trx('class_schedule').insert(classSchedule);
 
